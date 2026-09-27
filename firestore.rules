@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function me(uid) { return signedIn() && request.auth.uid == uid; }
+    match /profiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if me(uid);
+    }
+    match /rooms/{roomId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+      match /members/{uid} {
+        allow read: if signedIn();
+        allow create, update, delete: if me(uid);
+      }
+      match /messages/{messageId} {
+        allow read: if signedIn();
+        allow create: if signedIn() && request.resource.data.uid == request.auth.uid && request.resource.data.text is string && request.resource.data.text.size() <= 2000;
+        allow update, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      }
+      match /games/{gameId} {
+        allow read, write: if signedIn();
+      }
+    }
+    match /dms/{conversationId}/messages/{messageId} {
+      allow read, create: if signedIn() && (request.resource.data.from == request.auth.uid || request.resource.data.to == request.auth.uid || resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow update, delete: if signedIn() && resource.data.from == request.auth.uid;
+    }
+  }
+}

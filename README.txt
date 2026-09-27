@@ -1,44 +1,24 @@
-OG PARTY ATTRACTIVE FRONTEND
-==============================
+.vibes V4 — Firebase + GitHub Pages starter
 
-This version upgrades the previous demo with:
-- Username signup: other users see the username, not the email.
-- Attractive mobile-first home page.
-- Live rooms discovery page.
-- Create-party modal with categories.
-- Real-time room chat and members.
-- Profile page.
-- Bottom navigation.
-- Firebase Authentication + Firestore.
+Included and functional:
+- .vibes branding
+- Email/password Firebase Auth
+- Public username, bio and gender profile fields
+- Firebase Firestore live rooms, members and room chat
+- Private 1-to-1 text messages using Firebase UID
+- Direct audio URL music player (user-provided/authorized audio only)
+- Dice and number-guess games
+- Firestore-synced Tic-Tac-Toe inside a room
+- Microphone permission/local microphone toggle
+- GitHub Pages-ready static frontend
 
-FILES
------
-index.html
-style.css
-app.js
-firebase-config.js
+Important:
+1. Upload the files to the repository root; index.html must be at root.
+2. Publish firestore.rules in Firebase Console > Firestore Database > Rules.
+3. firebase-config.js is already included for project vibes-699f5.
+4. GitHub Pages cannot run a private server. Real multi-user group audio/1-to-1 calling needs a media/signaling backend such as LiveKit, Agora, or WebRTC signaling. The Mic button in this V4 only requests local microphone permission.
+5. Gifts/coins/payments and Reels upload/storage are not implemented as a real-money system in this package. Do not put payment secrets in frontend code.
+6. For copyrighted music, use audio you own or have permission to stream. Browser autoplay may require a user tap.
+7. The DM rules here restrict messages based on from/to fields, but a production app should also use a parent conversation document and membership validation.
 
-DEPLOY TO YOUR EXISTING GITHUB PAGES REPOSITORY
-------------------------------------------------
-1. Replace the existing index.html, style.css and app.js with these files.
-2. Keep firebase-config.js from this package.
-3. Commit/push to the main branch.
-4. GitHub Pages will rebuild automatically.
-
-IMPORTANT
----------
-- Firebase Email/Password Authentication must be enabled.
-- Cloud Firestore must be enabled.
-- The current app uses Firebase directly as the backend; a separate Node.js server is not required.
-- Do not upload Firebase service-account/private-key JSON files.
-
-USERNAME
---------
-New users choose a username during signup.
-Firebase Auth displayName stores the username.
-Room members and messages use username instead of email.
-
-NOTE
-----
-This is an original UI inspired by the general feature set described for OG Party (rooms, chat, social profile), not a copy of proprietary screens/assets.
-Audio/video calls, gifts, reels and payments are visual/coming-soon areas and are not implemented in this demo.
+Deploy: extract ZIP -> upload all files to GitHub repo root -> Settings -> Pages -> Deploy from main/root.
