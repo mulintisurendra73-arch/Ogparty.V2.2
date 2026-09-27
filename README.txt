@@ -45,3 +45,14 @@ Photos are compressed in the browser and stored in Firestore as data URLs, so Fi
 
 IMPORTANT:
 The voice mesh is suitable for small rooms. A large production voice service should use a dedicated media server/provider.
+
+
+V7 FIXES
+- Firebase Authentication is now the hard gate before Firestore listeners start.
+- The app shows a more specific Firestore permission error instead of a generic error.
+- Rooms are never queried before auth.currentUser exists.
+- Profile loading has an explicit auth check.
+- Microphone diagnostics now explain blocked permissions, missing mic, insecure HTTP, or a busy microphone.
+
+IMPORTANT
+Keep the Firebase Firestore rules published in the Firebase console. GitHub Pages only hosts the frontend; it cannot change Firebase rules.

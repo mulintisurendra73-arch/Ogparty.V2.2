@@ -7,6 +7,9 @@ const firebaseApp=initializeApp(firebaseConfig);
 const auth=getAuth(firebaseApp),db=getFirestore(firebaseApp);
 const $=id=>document.getElementById(id);
 let user=null,profile=null,room=null,roomUnsub=null,memberUnsub=null,messageUnsub=null,signalUnsub=null;
+let authReadyResolve;
+const authReady=new Promise(resolve=>authReadyResolve=resolve);
+let booting=false;
 let members=[],localStream=null,micOn=false,speakerOn=true;
 const peers=new Map(),candidateQueues=new Map(),handledSignals=new Set(),remoteAudio=new Map();
 
@@ -31,14 +34,66 @@ $("signup").onclick=async()=>{
 
 onAuthStateChanged(auth,async u=>{
   user=u;
-  if(!u){$("app").classList.add("hidden");$("authScreen").classList.remove("hidden");return}
-  $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");
-  try{await loadProfile();setStatus("Firebase connected","ok");startRooms();renderProfile();loadPeople()}catch(e){setStatus("Firebase error: "+e.message,"bad");toast(e.message)}
+  authReadyResolve(u);
+  if(!u){
+    booting=false;
+    if(roomUnsub)roomUnsub();
+    $("app").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+    setStatus("Sign in to connect to Firebase","bad");
+    return;
+  }
+  if(booting)return;
+  booting=true;
+  $("authScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  setStatus("Signed in. Checking Firebase…","ok");
+  try{
+    try{
+      await loadProfile();
+    }catch(profileError){
+      console.error("profile load",profileError);
+      profile={uid:user.uid,name:user.displayName||"Vibes User",bio:"",gender:"",avatar:""};
+      setStatus("Signed in • Firestore profile check failed: "+friendlyFirebaseError(profileError),"bad");
+      toast("Profile check: "+friendlyFirebaseError(profileError));
+    }
+    renderProfile();
+    if(user) startRooms();
+    if(user) loadPeople();
+  }catch(e){
+    console.error(".vibes startup error",e);
+    setStatus("Firebase error: "+friendlyFirebaseError(e),"bad");
+    toast(friendlyFirebaseError(e));
+  }finally{booting=false}
 });
+
+function friendlyFirebaseError(e){
+  const code=e?.code||"";
+  if(code.includes("permission-denied"))return "Firestore permission denied. Publish the firestore.rules file, then sign out and sign in again.";
+  if(code.includes("unauthenticated"))return "Firebase says you are not signed in. Sign out and sign in again.";
+  if(code.includes("failed-precondition"))return "Firestore needs setup/indexing. Check Firestore Database in Firebase Console.";
+  if(code.includes("unavailable"))return "Firestore is temporarily unavailable. Check your internet connection.";
+  return e?.message||String(e);
+}
+
 async function loadProfile(){
-  const r=await getDoc(doc(db,"profiles",user.uid));
-  if(r.exists())profile={...r.data(),uid:user.uid};
-  else{profile={uid:user.uid,name:user.displayName||"Vibes User",bio:"",gender:"",avatar:""};await setDoc(doc(db,"profiles",user.uid),profile)}
+  await authReady;
+  if(!user)throw Object.assign(new Error("Not signed in"),{code:"auth/unauthenticated"});
+  try{
+    const r=await getDoc(doc(db,"profiles",user.uid));
+    if(r.exists())profile={...r.data(),uid:user.uid};
+    else{
+      profile={uid:user.uid,name:user.displayName||"Vibes User",bio:"",gender:"",avatar:"",createdAt:serverTimestamp()};
+      await setDoc(doc(db,"profiles",user.uid),profile);
+    }
+  }catch(e){
+    // Keep the app usable even if the profile document is temporarily blocked.
+    if(e?.code==="permission-denied") {
+      profile={uid:user.uid,name:user.displayName||"Vibes User",bio:"",gender:"",avatar:""};
+      throw e;
+    }
+    throw e;
+  }
 }
 function setStatus(text,type){$("firebaseStatus").textContent=text;$("firebaseStatus").style.background=type==="bad"?"#ffdede":"#ffffff55";$("firebaseStatus").style.color=type==="bad"?"#9d0000":"#386b5d"}
 
@@ -56,15 +111,17 @@ function openTab(t){
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>openTab(b.dataset.tab));
 
 function startRooms(){
+  if(!user){setStatus("Waiting for Firebase Authentication…","bad");return}
   if(roomUnsub)roomUnsub();
   roomUnsub=onSnapshot(collection(db,"rooms"),snap=>{
     const arr=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     $("rooms").innerHTML="";
     if(!arr.length){$("rooms").innerHTML='<div class="empty">No rooms yet. Tap + Create.</div>';return}
     arr.forEach(r=>renderRoom(r));
-  },e=>{setStatus("Rooms error: "+e.message,"bad");toast(e.message)});
+  },e=>{console.error("rooms listener",e);setStatus("Rooms error: "+friendlyFirebaseError(e),"bad");toast(friendlyFirebaseError(e))});
 }
 async function renderRoom(r){
+  if(!user)return;
   const el=document.createElement("div");el.className="roomCard";
   let ms=[];try{const s=await getDocs(query(collection(db,"rooms",r.id,"members"),limit(5)));ms=s.docs.map(d=>d.data())}catch{}
   el.innerHTML=`<img class="roomCover" src="${avatar({name:r.ownerName,avatar:r.ownerAvatar})}"><div class="roomInfo"><div class="roomTitle">${esc(r.name||"Room")}</div><span class="topic">${esc(r.topic||"Let's vibe")}</span><div class="miniAv">${ms.map(m=>`<img src="${avatar(m)}">`).join("")}</div></div><span class="count">◉ ${ms.length}</span>`;
@@ -110,11 +167,18 @@ async function sendRoomMessage(){const text=$("roomText").value.trim();if(!text|
 document.querySelectorAll(".emoji").forEach(b=>b.onclick=()=>{$("roomText").value+=b.textContent;$("roomText").focus()});
 
 async function toggleMic(){
-  if(!room)return;
+  if(!room){toast("Open a room first.");return}
   if(!navigator.mediaDevices?.getUserMedia){toast("Microphone requires HTTPS and a supported browser.");return}
+  if(!window.isSecureContext){toast("Microphone needs an HTTPS page. Open the GitHub Pages https:// address.");return}
   if(!localStream){
     try{localStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false})}
-    catch(e){toast("Mic permission failed: "+(e.name||e.message));return}
+    catch(e){
+      console.error("getUserMedia",e);
+      const msg=e.name==="NotAllowedError"?"Microphone permission was blocked. Android Chrome → site settings → Microphone → Allow, then reload.":e.name==="NotFoundError"?"No microphone was found on this device.":e.name==="NotReadableError"?"The microphone is being used by another app.":"Microphone error: "+(e.message||e.name);
+      toast(msg);
+      setStatus(msg,"bad");
+      return;
+    }
   }
   micOn=!micOn;localStream.getAudioTracks().forEach(t=>t.enabled=micOn);
   try{await updateDoc(doc(db,"rooms",room.id,"members",user.uid),{mic:micOn})}catch{}
