@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b12">
+  <title>OG Party</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <section id="authView" class="auth-screen">
+    <div class="auth-glow glow-one"></div>
+    <div class="auth-glow glow-two"></div>
+    <div class="auth-card">
+      <div class="brand-mark">OG</div>
+      <h1>OG Party</h1>
+      <p class="muted">Meet. Chat. Party. Repeat.</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-tab="login">Login</button>
+        <button class="auth-tab" data-auth-tab="signup">Create account</button>
+      </div>
+
+      <div id="signupFields" class="hidden">
+        <label>Username</label>
+        <input id="username" maxlength="20" placeholder="Choose your username">
+      </div>
+
+      <label>Email</label>
+      <input id="email" type="email" placeholder="you@example.com">
+
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Minimum 6 characters">
+
+      <button id="authBtn" class="primary-btn wide">Login</button>
+      <p id="authStatus" class="status"></p>
+      <p class="tiny">Your email is used only for sign-in. Other people see your username.</p>
+    </div>
+  </section>
+
+  <section id="appView" class="hidden">
+    <header class="topbar">
+      <div class="brand-small"><span>OG</span> Party</div>
+      <button id="topProfileBtn" class="avatar-btn">OG</button>
+    </header>
+
+    <main class="page-wrap">
+      <section id="homePage" class="page active-page">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">WELCOME BACK</p>
+            <h2>Hey, <span id="homeUsername">OG</span> 👋</h2>
+            <p>Find your people and jump into a live party.</p>
+          </div>
+          <div class="hero-badge">🔥 LIVE</div>
+        </div>
+
+        <div class="quick-grid">
+          <button id="quickCreate" class="quick-card create-card">
+            <span class="quick-icon">＋</span><b>Create Room</b><small>Start your party</small>
+          </button>
+          <button id="quickJoin" class="quick-card">
+            <span class="quick-icon">↗</span><b>Join Room</b><small>Enter a room code</small>
+          </button>
+          <button id="quickDiscover" class="quick-card">
+            <span class="quick-icon">◎</span><b>Live Rooms</b><small>Meet people now</small>
+          </button>
+        </div>
+
+        <div class="section-head"><h3>Live rooms</h3><button id="seeAllRooms">See all</button></div>
+        <div id="homeRooms" class="room-list"></div>
+
+        <div class="feature-banner">
+          <div><span class="pill">COMING SOON</span><h3>More ways to party</h3><p>Audio rooms, gifts, reels and private chats can be added next.</p></div>
+          <div class="sparkle">✦</div>
+        </div>
+      </section>
+
+      <section id="roomsPage" class="page">
+        <div class="page-title"><div><p class="eyebrow">DISCOVER</p><h2>Live Rooms</h2></div><button id="roomsCreateBtn" class="mini-primary">＋ Create</button></div>
+        <div id="roomsList" class="room-list"></div>
+      </section>
+
+      <section id="chatPage" class="page">
+        <div class="page-title"><div><p class="eyebrow">MESSAGES</p><h2>Your Party Chat</h2></div></div>
+        <div class="empty-state">
+          <div class="empty-icon">💬</div>
+          <h3>Room chat is live</h3>
+          <p>Join a room to see real-time messages and members.</p>
+          <button class="primary-btn" id="chatRoomsBtn">Explore rooms</button>
+        </div>
+      </section>
+
+      <section id="profilePage" class="page">
+        <div class="profile-card">
+          <div id="profileAvatar" class="profile-avatar">OG</div>
+          <h2 id="profileUsername">OG</h2>
+          <p id="profileEmail" class="muted">Hidden from other users</p>
+          <button id="editUsernameBtn" class="outline-btn">Edit username</button>
+        </div>
+        <div class="settings-list">
+          <div class="setting"><span>👤</span><div><b>Public username</b><small>Shown to other party members</small></div><strong id="profileNameSmall">OG</strong></div>
+          <div class="setting"><span>🔒</span><div><b>Account email</b><small>Used for login only</small></div><strong>Private</strong></div>
+          <div class="setting"><span>🎁</span><div><b>Gifts & wallet</b><small>Coming soon</small></div><strong>Soon</strong></div>
+        </div>
+        <button id="logoutBtn" class="danger-btn wide">Logout</button>
+      </section>
+
+      <section id="roomPage" class="page">
+        <div class="room-top">
+          <button id="backHomeBtn" class="icon-btn">‹</button>
+          <div><p class="eyebrow">PARTY ROOM</p><h2 id="roomTitle">Room</h2></div>
+          <button id="copyRoomBtn" class="icon-btn">⧉</button>
+        </div>
+        <div class="room-code">ROOM <b id="roomCodeLabel">------</b></div>
+
+        <div class="room-stage">
+          <div class="stage-orb">🎤</div>
+          <h3>Welcome to the party</h3>
+          <p id="roomHostLabel">Host</p>
+        </div>
+
+        <div class="room-columns">
+          <div class="panel">
+            <div class="section-head"><h3>Chat</h3><span id="roomOnlineCount" class="online-dot">● online</span></div>
+            <div id="messages" class="messages"></div>
+            <div class="message-bar"><input id="messageInput" maxlength="2000" placeholder="Say something..."><button id="sendBtn">➤</button></div>
+          </div>
+          <div class="panel members-panel">
+            <div class="section-head"><h3>People</h3></div>
+            <div id="members"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="homePage"><span>⌂</span><small>Home</small></button>
+      <button class="nav-item" data-page="roomsPage"><span>◉</span><small>Live</small></button>
+      <button class="nav-center" id="navCreate"><span>＋</span></button>
+      <button class="nav-item" data-page="chatPage"><span>♡</span><small>Chat</small></button>
+      <button class="nav-item" data-page="profilePage"><span>●</span><small>Profile</small></button>
+    </nav>
+  </section>
+
+  <div id="createModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head"><h2>Create party</h2><button id="closeModal" class="icon-btn">×</button></div>
+      <label>Room name</label>
+      <input id="newRoomName" maxlength="40" placeholder="e.g. Night Vibes">
+      <label>Category</label>
+      <div class="category-row">
+        <button class="category active" data-category="Chill">🌙 Chill</button>
+        <button class="category" data-category="Music">🎵 Music</button>
+        <button class="category" data-category="Games">🎮 Games</button>
+        <button class="category" data-category="Chat">💬 Chat</button>
+      </div>
+      <button id="createRoomBtn" class="primary-btn wide">Create party room</button>
+      <p id="roomStatus" class="status"></p>
+    </div>
+  </div>
+
+  <div id="usernameModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="brand-mark small-mark">OG</div>
+      <h2>Choose your username</h2>
+      <p class="muted">This is what other people will see.</p>
+      <input id="setupUsername" maxlength="20" placeholder="Your username">
+      <button id="saveUsernameBtn" class="primary-btn wide">Save username</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
