@@ -1,1 +1,9 @@
-{"name":".vibes V8","short_name":".vibes","start_url":"./","display":"standalone","background_color":"#0c0716","theme_color":"#12091f","icons":[]}
+{
+  "name": ".vibes",
+  "short_name": "vibes",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0c0716",
+  "theme_color": "#12091f",
+  "icons": []
+}
