@@ -584,11 +584,19 @@ async function sendDM(){
 // ---------- Navigation ----------
 const views=['home','rooms','messages','profile'];
 function showView(name){
+  if(!views.includes(name)) name='home';
   if(currentRoom) closeRoom();
-  views.forEach(v=>$(v+'View').hidden=v!==name);
+  views.forEach(v=>{
+    const el=$(v+'View');
+    if(!el) return;
+    const active=v===name;
+    el.hidden=!active;
+    el.classList.toggle('active',active);
+    el.setAttribute('aria-hidden', String(!active));
+  });
   document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===name));
   if(name!=='messages') closeDM();
-  window.scrollTo(0,0);
+  window.scrollTo({top:0,behavior:'instant'});
 }
 document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>showView(b.dataset.nav));
 
@@ -634,4 +642,4 @@ async function shareRoom(){
   try{if(navigator.share)await navigator.share({title:'.vibes room',text:`Join ${$('roomTitle').textContent} on .vibes`,url});else{await navigator.clipboard.writeText(url);toast('Room link copied');}}catch{}
 }
 
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=8.4.2',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
