@@ -1,24 +1,50 @@
-.vibes V4 — Firebase + GitHub Pages starter
+.vibes V5
+====================
 
-Included and functional:
-- .vibes branding
-- Email/password Firebase Auth
-- Public username, bio and gender profile fields
-- Firebase Firestore live rooms, members and room chat
-- Private 1-to-1 text messages using Firebase UID
-- Direct audio URL music player (user-provided/authorized audio only)
-- Dice and number-guess games
-- Firestore-synced Tic-Tac-Toe inside a room
-- Microphone permission/local microphone toggle
-- GitHub Pages-ready static frontend
+This version is designed from the uploaded reference screens with an original .vibes UI.
 
-Important:
-1. Upload the files to the repository root; index.html must be at root.
-2. Publish firestore.rules in Firebase Console > Firestore Database > Rules.
-3. firebase-config.js is already included for project vibes-699f5.
-4. GitHub Pages cannot run a private server. Real multi-user group audio/1-to-1 calling needs a media/signaling backend such as LiveKit, Agora, or WebRTC signaling. The Mic button in this V4 only requests local microphone permission.
-5. Gifts/coins/payments and Reels upload/storage are not implemented as a real-money system in this package. Do not put payment secrets in frontend code.
-6. For copyrighted music, use audio you own or have permission to stream. Browser autoplay may require a user tap.
-7. The DM rules here restrict messages based on from/to fields, but a production app should also use a parent conversation document and membership validation.
+Included:
+- Firebase Email/Password authentication
+- Profile picture, username, bio, gender
+- Persistent profile ID
+- Chatroom cards with room DP, member DPs and live member count
+- 8 visible voice slots per room
+- Real microphone permission using getUserMedia()
+- Small-room WebRTC voice mesh with Firestore signaling
+- Mute/unmute microphone state synced to room
+- Speaker mute/unmute for remote audio
+- Real-time room text chat
+- Private 1-to-1 messages
+- Room music player for authorized direct audio URLs
+- Dice, Tic-Tac-Toe and Number Guess games
+- Mobile-first design
+- GitHub Pages compatible
 
-Deploy: extract ZIP -> upload all files to GitHub repo root -> Settings -> Pages -> Deploy from main/root.
+Firebase:
+Project: vibes-699f5
+Web configuration is already inside firebase-config.js.
+
+IMPORTANT:
+1. Deploy firestore.rules in Firebase Console -> Firestore Database -> Rules.
+2. Enable Authentication -> Email/Password.
+3. For the microphone, GitHub Pages must be HTTPS. Browser microphone permission is not available on ordinary HTTP pages.
+4. WebRTC uses public Google STUN servers. Some mobile networks may require TURN for difficult NATs. For a larger production app, add a TURN server.
+5. The voice implementation is a peer-to-peer mesh intended for small rooms. It is not a replacement for a scalable media server.
+6. Profile photos are compressed and stored as data URLs in Firestore, so Firebase Storage is not required for this demo. Keep photos small.
+7. Do not upload Firebase service-account/private-key JSON to GitHub.
+8. Only play music you own or are authorized to stream. Browser autoplay rules can require the user to press play.
+
+GitHub Pages:
+Upload all files to the repository root:
+index.html
+style.css
+app.js
+firebase-config.js
+firestore.rules
+README.txt
+
+Then:
+GitHub -> Settings -> Pages -> Deploy from branch -> main -> /root -> Save.
+
+Firestore security:
+The included rules are suitable for this demo. For production, tighten DM and WebRTC signaling authorization further and use a server-authoritative backend for coins, gifts and payments.

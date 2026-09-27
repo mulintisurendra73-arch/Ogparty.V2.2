@@ -1,14 +1,220 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a12"><title>.vibes — Party</title><link rel="stylesheet" href="style.css"></head><body>
-<div id="toast" class="toast"></div>
-<section id="authView" class="auth-screen"><div class="auth-card"><div class="brand-mark">•vibes</div><h1>•vibes</h1><p class="muted">Meet · Chat · Party · Play</p><div class="auth-tabs"><button class="auth-tab active" data-auth-tab="login">Login</button><button class="auth-tab" data-auth-tab="signup">Create account</button></div><div id="signupFields" class="hidden"><label>Username</label><input id="username" maxlength="20" placeholder="Choose username"></div><label>Email</label><input id="email" type="email" placeholder="you@example.com"><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"><button id="authBtn" class="primary-btn wide">Login</button><p id="authStatus" class="status"></p></div></section>
-<section id="appView" class="hidden"><header class="topbar"><div class="brand-small">•vibes <span>Party</span></div><button id="topProfileBtn" class="avatar-btn">VI</button></header><main class="page-wrap">
-<section id="homePage" class="page active-page"><div class="hero"><div><p class="eyebrow">WELCOME</p><h2>Hey, <span id="homeUsername">vibes</span> 👋</h2><p>Find a room, message friends or start a party.</p></div><div class="hero-badge">● LIVE</div></div><div class="quick-grid"><button id="quickCreate" class="quick-card create-card"><span class="quick-icon">＋</span><b>Create Party</b><small>Start a room</small></button><button id="quickJoin" class="quick-card"><span class="quick-icon">↗</span><b>Join Room</b><small>Use a code</small></button><button id="quickGames" class="quick-card"><span class="quick-icon">🎮</span><b>Games</b><small>Play together</small></button><button id="quickMusic" class="quick-card"><span class="quick-icon">🎵</span><b>Music</b><small>Play audio</small></button></div><div class="section-head"><h3>Live rooms</h3><button id="seeAllRooms">See all</button></div><div id="homeRooms" class="room-list"></div></section>
-<section id="roomsPage" class="page"><div class="page-title"><div><p class="eyebrow">DISCOVER</p><h2>Live Rooms</h2></div><button id="roomsCreateBtn" class="mini-primary">＋ Create</button></div><div id="roomsList" class="room-list"></div></section>
-<section id="messagesPage" class="page"><div class="page-title"><div><p class="eyebrow">PRIVATE</p><h2>Messages</h2></div></div><div class="panel"><div class="dm-start"><input id="dmUserId" placeholder="Enter friend's Firebase UID"><button id="openDmBtn" class="primary-btn">Open</button></div><p class="tiny">For now, start a private chat with a friend's UID. Their email is never shown.</p></div><div id="dmList" class="dm-list"></div><div id="dmPanel" class="panel hidden"><div class="section-head"><h3 id="dmTitle">Private chat</h3><button id="closeDmBtn">Close</button></div><div id="dmMessages" class="messages"></div><div class="message-bar"><input id="dmInput" maxlength="2000" placeholder="Write a private message..."><button id="dmSendBtn">➤</button></div></div></section>
-<section id="gamesPage" class="page"><div class="page-title"><div><p class="eyebrow">PLAY</p><h2>Party Games</h2></div></div><div class="game-grid"><button class="game-card" data-game="dice">🎲<b>Dice</b><small>Quick local game</small></button><button class="game-card" data-game="guess">🔢<b>Guess</b><small>Number challenge</small></button><button class="game-card" data-game="ttt">⭕<b>Tic-Tac-Toe</b><small>Room-synced board</small></button></div><div id="gamePanel" class="panel game-panel"><h3>Choose a game</h3><p class="muted">Open a game above. Multiplayer game state is stored in Firestore for rooms.</p></div></section>
-<section id="musicPage" class="page"><div class="page-title"><div><p class="eyebrow">AUDIO</p><h2>Music Player</h2></div></div><div class="panel music-player"><div class="music-disc">♪</div><h3 id="musicTitle">No track loaded</h3><p class="muted">Use a direct audio URL you have permission to play.</p><input id="audioUrl" placeholder="https://example.com/song.mp3"><input id="audioTitle" placeholder="Track title"><button id="loadMusicBtn" class="primary-btn wide">Load & Play</button><audio id="audioPlayer" controls preload="none"></audio></div></section>
-<section id="profilePage" class="page"><div class="profile-card"><div id="profileAvatar" class="profile-avatar">VI</div><h2 id="profileUsername">vibes</h2><p id="profileEmail" class="muted">Email private</p></div><div class="panel profile-editor"><h3>Your profile</h3><label>Username</label><input id="profileNameInput" maxlength="20"><label>Bio</label><textarea id="bioInput" maxlength="160" placeholder="Tell people about you..."></textarea><label>Gender</label><select id="genderInput"><option value="">Prefer not to say</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option></select><button id="saveProfileBtn" class="primary-btn wide">Save profile</button></div><div class="settings-list"><div class="setting"><span>🎁</span><div><b>Gifts</b><small>UI wallet coming next</small></div><strong>Demo</strong></div><div class="setting"><span>🎬</span><div><b>Reels</b><small>Media storage needs a storage service</small></div><strong>Setup</strong></div></div><button id="logoutBtn" class="danger-btn wide">Logout</button></section>
-<section id="roomPage" class="page"><div class="room-top"><button id="backHomeBtn" class="icon-btn">‹</button><div><p class="eyebrow">PARTY ROOM</p><h2 id="roomTitle">Room</h2></div><button id="copyRoomBtn" class="icon-btn">⧉</button></div><div class="room-code">ROOM <b id="roomCodeLabel">------</b></div><div class="room-stage"><div class="stage-orb">🎤</div><h3 id="roomHostLabel">Host</h3><div class="audio-actions"><button id="micBtn" class="primary-btn">🎙 Mic</button><button id="leaveRoomBtn" class="outline-btn">Leave</button></div><p class="tiny">Mic permission enables your microphone locally. Production group audio needs a WebRTC/media service.</p></div><div class="room-columns"><div class="panel"><div class="section-head"><h3>Chat</h3><span id="roomOnlineCount">● online</span></div><div id="messages" class="messages"></div><div class="message-bar"><input id="messageInput" maxlength="2000" placeholder="Say something..."><button id="sendBtn">➤</button></div></div><div class="panel members-panel"><div class="section-head"><h3>People</h3></div><div id="members"></div></div></div></section>
-</main><nav class="bottom-nav"><button class="nav-item active" data-page="homePage"><span>⌂</span><small>Home</small></button><button class="nav-item" data-page="roomsPage"><span>◉</span><small>Live</small></button><button class="nav-center" id="navCreate"><span>＋</span></button><button class="nav-item" data-page="messagesPage"><span>♡</span><small>Messages</small></button><button class="nav-item" data-page="profilePage"><span>●</span><small>Profile</small></button></nav></section>
-<div id="createModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Create party</h2><button id="closeModal" class="icon-btn">×</button></div><label>Room name</label><input id="newRoomName" maxlength="40" placeholder="Night Vibes"><label>Category</label><div class="category-row"><button class="category active" data-category="Chill">🌙 Chill</button><button class="category" data-category="Music">🎵 Music</button><button class="category" data-category="Games">🎮 Games</button><button class="category" data-category="Chat">💬 Chat</button></div><button id="createRoomBtn" class="primary-btn wide">Create party room</button><p id="roomStatus" class="status"></p></div></div>
-<script type="module" src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#45d2a0">
+  <title>.vibes — Chatrooms</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast"></div>
+
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand">.vibes</div>
+      <p class="muted">Voice • Chat • Games • Friends</p>
+      <input id="authEmail" type="email" placeholder="Email">
+      <input id="authPassword" type="password" placeholder="Password">
+      <input id="authName" type="text" placeholder="Username (for sign up)">
+      <button id="signInBtn" class="primary">Sign in</button>
+      <button id="signUpBtn" class="secondary">Create account</button>
+      <p class="tiny">Use your own profile photo, bio and gender after signing in.</p>
+    </div>
+  </section>
+
+  <main id="app" class="app hidden">
+    <header class="topbar">
+      <div>
+        <div class="brand small">.vibes</div>
+        <div id="pageTitle" class="page-title">Chatrooms</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Search">⌕</button>
+        <button class="icon-btn" id="trophyBtn" aria-label="Trophy">🏆</button>
+      </div>
+    </header>
+
+    <section id="homeScreen" class="screen">
+      <div class="tabs">
+        <button class="tab active" data-tab="rooms">Chatrooms</button>
+        <button class="tab" data-tab="friends">Friends</button>
+        <button class="tab" data-tab="games">Games</button>
+      </div>
+      <div id="roomsTab" class="tab-panel">
+        <div class="hero-strip">
+          <div>
+            <b>Live rooms</b>
+            <span>Join a room and talk with your friends.</span>
+          </div>
+          <button id="createRoomBtn" class="mini-primary">＋ Create</button>
+        </div>
+        <div id="roomList" class="room-list"></div>
+      </div>
+
+      <div id="friendsTab" class="tab-panel hidden">
+        <div class="section-title">Friends</div>
+        <div id="friendsList" class="empty-card">No friends yet. Open a profile or start a private message.</div>
+      </div>
+
+      <div id="gamesTab" class="tab-panel hidden">
+        <div class="section-title">Games</div>
+        <div class="game-grid">
+          <button class="game-card" id="diceGameBtn"><span>🎲</span><b>Dice</b><small>Roll and share</small></button>
+          <button class="game-card" id="tttGameBtn"><span>⭕</span><b>Tic-Tac-Toe</b><small>Play locally</small></button>
+          <button class="game-card" id="guessGameBtn"><span>🔢</span><b>Guess</b><small>Number game</small></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="messagesScreen" class="screen hidden">
+      <div class="message-filters">
+        <button class="filter active">All</button>
+        <button class="filter">Online</button>
+        <button class="filter">Unread</button>
+      </div>
+      <div id="dmList" class="dm-list"></div>
+    </section>
+
+    <section id="profileScreen" class="screen hidden">
+      <div class="profile-card">
+        <div class="profile-head">
+          <img id="profileAvatar" class="avatar xl" src="" alt="Profile">
+          <div class="profile-main">
+            <h2 id="profileName">User</h2>
+            <div id="profileGender" class="pill">Gender</div>
+            <div class="profile-id">ID: <span id="profileId"></span> <button id="copyIdBtn">▣</button></div>
+            <p id="profileBio" class="bio"></p>
+          </div>
+          <button id="editProfileBtn" class="round-arrow">›</button>
+        </div>
+        <div class="stats">
+          <div><b>0</b><span>Friends</span></div>
+          <div><b>0</b><span>Following</span></div>
+          <div><b>0</b><span>Followers</span></div>
+          <div><b>0</b><span>Visitors</span></div>
+        </div>
+        <div class="gem-card"><span>⭐</span><div><small>Available My Gems</small><b>0.00</b></div><strong>»</strong></div>
+        <div class="profile-actions">
+          <button>🏪<span>My Store</span></button>
+          <button>🎒<span>Backpack</span></button>
+          <button>🤝<span>Referral</span></button>
+        </div>
+        <div class="profile-actions four">
+          <button>🎧<span>Host Center</span></button>
+          <button>👑<span>Level</span></button>
+          <button>🛟<span>Help</span></button>
+          <button id="settingsBtn">⚙️<span>Settings</span></button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="homeScreen"><span>⌂</span><small>Home</small></button>
+      <button class="nav-btn" data-screen="homeScreen" data-open-tab="friends"><span>◉</span><small>Rooms</small></button>
+      <button class="nav-btn" data-screen="messagesScreen"><span>●●</span><small>Message</small></button>
+      <button class="nav-btn" data-screen="profileScreen"><span>♟</span><small>Profile</small></button>
+    </nav>
+  </main>
+
+  <div id="roomModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close-modal" data-close="roomModal">×</button>
+      <h2>Create a room</h2>
+      <input id="roomNameInput" placeholder="Room name" maxlength="40">
+      <input id="roomTopicInput" placeholder="Topic / room tag" maxlength="40">
+      <button id="saveRoomBtn" class="primary">Create room</button>
+    </div>
+  </div>
+
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close-modal" data-close="profileModal">×</button>
+      <h2>Edit profile</h2>
+      <label class="upload-avatar">
+        <img id="avatarPreview" class="avatar lg" src="" alt="">
+        <span>Change photo</span>
+        <input id="avatarInput" type="file" accept="image/*">
+      </label>
+      <input id="editName" maxlength="30" placeholder="Username">
+      <textarea id="editBio" maxlength="160" placeholder="Bio"></textarea>
+      <select id="editGender">
+        <option value="">Select gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+        <option>Prefer not to say</option>
+      </select>
+      <button id="saveProfileBtn" class="primary">Save profile</button>
+    </div>
+  </div>
+
+  <div id="gameModal" class="modal hidden">
+    <div class="modal-card game-modal">
+      <button class="close-modal" data-close="gameModal">×</button>
+      <h2 id="gameTitle">Game</h2>
+      <div id="gameBody"></div>
+    </div>
+  </div>
+
+  <section id="roomScreen" class="room-screen hidden">
+    <header class="room-header">
+      <button id="leaveRoomBtn" class="circle-btn">‹</button>
+      <div class="room-title-wrap">
+        <b id="roomTitle">Room</b>
+        <small id="roomSub">0 people</small>
+      </div>
+      <button id="shareRoomBtn" class="circle-btn">↗</button>
+      <button id="roomMoreBtn" class="circle-btn">⋯</button>
+    </header>
+    <div class="room-balance"><span>⭐</span> <b>0</b><span class="room-id">ID: <span id="roomIdText"></span></span></div>
+
+    <div id="slotGrid" class="slot-grid"></div>
+
+    <div class="room-notice">
+      <b>♡ Welcome to .vibes ⚡</b>
+      <p>Be respectful. Content involving illegal activity, violence or sexual exploitation is not allowed.</p>
+    </div>
+
+    <div id="roomMessages" class="room-messages"></div>
+
+    <div class="room-controls">
+      <button id="speakerBtn" class="control-circle">🔊</button>
+      <button id="musicBtn" class="control-circle">🎵</button>
+      <button id="micBtn" class="control-circle mic-off">🎙</button>
+    </div>
+    <div class="chat-composer">
+      <input id="roomMessageInput" placeholder="Say Something..." maxlength="2000">
+      <button id="sendRoomMessageBtn">➤</button>
+      <button class="emoji-btn" data-emoji="🎮">🎮</button>
+      <button class="emoji-btn" data-emoji="😂">😂</button>
+    </div>
+  </section>
+
+  <div id="musicPanel" class="music-panel hidden">
+    <b>Room music</b>
+    <input id="musicUrl" placeholder="Direct .mp3/.ogg URL you can use">
+    <div class="music-row">
+      <button id="loadMusicBtn" class="primary">Load</button>
+      <button id="stopMusicBtn" class="secondary">Stop</button>
+    </div>
+    <audio id="roomAudio" controls></audio>
+    <small>Use audio you own or have permission to play. Browser autoplay rules still apply.</small>
+  </div>
+
+  <div id="dmScreen" class="dm-screen hidden">
+    <header class="dm-header">
+      <button id="closeDmBtn" class="circle-btn">‹</button>
+      <img id="dmAvatar" class="avatar sm" src="" alt="">
+      <div><b id="dmName">Message</b><small>Private chat</small></div>
+    </header>
+    <div id="dmMessages" class="dm-messages"></div>
+    <div class="dm-composer">
+      <input id="dmInput" placeholder="Message..." maxlength="2000">
+      <button id="sendDmBtn">➤</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
