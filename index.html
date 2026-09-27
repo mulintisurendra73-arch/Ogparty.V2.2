@@ -1,220 +1,122 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#45d2a0">
-  <title>.vibes — Chatrooms</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4bd2a4">
+<title>.vibes</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="toast"></div>
+<div id="toast"></div>
 
-  <section id="authScreen" class="auth-screen">
-    <div class="auth-card">
-      <div class="brand">.vibes</div>
-      <p class="muted">Voice • Chat • Games • Friends</p>
-      <input id="authEmail" type="email" placeholder="Email">
-      <input id="authPassword" type="password" placeholder="Password">
-      <input id="authName" type="text" placeholder="Username (for sign up)">
-      <button id="signInBtn" class="primary">Sign in</button>
-      <button id="signUpBtn" class="secondary">Create account</button>
-      <p class="tiny">Use your own profile photo, bio and gender after signing in.</p>
+<section id="authScreen" class="auth">
+  <div class="authCard">
+    <div class="logo">.vibes</div>
+    <div class="tag">Voice • Chat • Games • Friends</div>
+    <div id="authError" class="error hidden"></div>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <input id="username" placeholder="Username for new account">
+    <button id="login" class="pink">Sign in</button>
+    <button id="signup" class="soft">Create account</button>
+  </div>
+</section>
+
+<main id="app" class="hidden">
+  <header class="header">
+    <div><div class="logo mini">.vibes</div><h1 id="title">Chatrooms</h1></div>
+    <div class="headerBtns"><button id="search">⌕</button><button>🏆</button></div>
+  </header>
+
+  <div id="firebaseStatus" class="status">Connecting to Firebase…</div>
+
+  <section id="home" class="page">
+    <div class="tabs">
+      <button class="tab active" data-tab="rooms">Chatrooms</button>
+      <button class="tab" data-tab="friends">Friends</button>
+      <button class="tab" data-tab="games">Games</button>
+    </div>
+
+    <div id="roomsTab">
+      <div class="createBar"><div><b>Live rooms</b><small>Join a room and talk</small></div><button id="createRoom" class="pink smallBtn">＋ Create</button></div>
+      <div id="rooms"></div>
+    </div>
+
+    <div id="friendsTab" class="hidden"><div class="empty">Friends will appear here.</div></div>
+
+    <div id="gamesTab" class="hidden">
+      <div class="gameGrid">
+        <button class="game" id="dice">🎲<b>Dice</b><small>Roll</small></button>
+        <button class="game" id="ttt">⭕<b>Tic-Tac-Toe</b><small>2 player</small></button>
+        <button class="game" id="guess">🔢<b>Guess</b><small>1–10</small></button>
+      </div>
     </div>
   </section>
 
-  <main id="app" class="app hidden">
-    <header class="topbar">
-      <div>
-        <div class="brand small">.vibes</div>
-        <div id="pageTitle" class="page-title">Chatrooms</div>
-      </div>
-      <div class="top-actions">
-        <button class="icon-btn" id="searchBtn" aria-label="Search">⌕</button>
-        <button class="icon-btn" id="trophyBtn" aria-label="Trophy">🏆</button>
-      </div>
-    </header>
-
-    <section id="homeScreen" class="screen">
-      <div class="tabs">
-        <button class="tab active" data-tab="rooms">Chatrooms</button>
-        <button class="tab" data-tab="friends">Friends</button>
-        <button class="tab" data-tab="games">Games</button>
-      </div>
-      <div id="roomsTab" class="tab-panel">
-        <div class="hero-strip">
-          <div>
-            <b>Live rooms</b>
-            <span>Join a room and talk with your friends.</span>
-          </div>
-          <button id="createRoomBtn" class="mini-primary">＋ Create</button>
-        </div>
-        <div id="roomList" class="room-list"></div>
-      </div>
-
-      <div id="friendsTab" class="tab-panel hidden">
-        <div class="section-title">Friends</div>
-        <div id="friendsList" class="empty-card">No friends yet. Open a profile or start a private message.</div>
-      </div>
-
-      <div id="gamesTab" class="tab-panel hidden">
-        <div class="section-title">Games</div>
-        <div class="game-grid">
-          <button class="game-card" id="diceGameBtn"><span>🎲</span><b>Dice</b><small>Roll and share</small></button>
-          <button class="game-card" id="tttGameBtn"><span>⭕</span><b>Tic-Tac-Toe</b><small>Play locally</small></button>
-          <button class="game-card" id="guessGameBtn"><span>🔢</span><b>Guess</b><small>Number game</small></button>
-        </div>
-      </div>
-    </section>
-
-    <section id="messagesScreen" class="screen hidden">
-      <div class="message-filters">
-        <button class="filter active">All</button>
-        <button class="filter">Online</button>
-        <button class="filter">Unread</button>
-      </div>
-      <div id="dmList" class="dm-list"></div>
-    </section>
-
-    <section id="profileScreen" class="screen hidden">
-      <div class="profile-card">
-        <div class="profile-head">
-          <img id="profileAvatar" class="avatar xl" src="" alt="Profile">
-          <div class="profile-main">
-            <h2 id="profileName">User</h2>
-            <div id="profileGender" class="pill">Gender</div>
-            <div class="profile-id">ID: <span id="profileId"></span> <button id="copyIdBtn">▣</button></div>
-            <p id="profileBio" class="bio"></p>
-          </div>
-          <button id="editProfileBtn" class="round-arrow">›</button>
-        </div>
-        <div class="stats">
-          <div><b>0</b><span>Friends</span></div>
-          <div><b>0</b><span>Following</span></div>
-          <div><b>0</b><span>Followers</span></div>
-          <div><b>0</b><span>Visitors</span></div>
-        </div>
-        <div class="gem-card"><span>⭐</span><div><small>Available My Gems</small><b>0.00</b></div><strong>»</strong></div>
-        <div class="profile-actions">
-          <button>🏪<span>My Store</span></button>
-          <button>🎒<span>Backpack</span></button>
-          <button>🤝<span>Referral</span></button>
-        </div>
-        <div class="profile-actions four">
-          <button>🎧<span>Host Center</span></button>
-          <button>👑<span>Level</span></button>
-          <button>🛟<span>Help</span></button>
-          <button id="settingsBtn">⚙️<span>Settings</span></button>
-        </div>
-      </div>
-    </section>
-
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-screen="homeScreen"><span>⌂</span><small>Home</small></button>
-      <button class="nav-btn" data-screen="homeScreen" data-open-tab="friends"><span>◉</span><small>Rooms</small></button>
-      <button class="nav-btn" data-screen="messagesScreen"><span>●●</span><small>Message</small></button>
-      <button class="nav-btn" data-screen="profileScreen"><span>♟</span><small>Profile</small></button>
-    </nav>
-  </main>
-
-  <div id="roomModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close-modal" data-close="roomModal">×</button>
-      <h2>Create a room</h2>
-      <input id="roomNameInput" placeholder="Room name" maxlength="40">
-      <input id="roomTopicInput" placeholder="Topic / room tag" maxlength="40">
-      <button id="saveRoomBtn" class="primary">Create room</button>
-    </div>
-  </div>
-
-  <div id="profileModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close-modal" data-close="profileModal">×</button>
-      <h2>Edit profile</h2>
-      <label class="upload-avatar">
-        <img id="avatarPreview" class="avatar lg" src="" alt="">
-        <span>Change photo</span>
-        <input id="avatarInput" type="file" accept="image/*">
-      </label>
-      <input id="editName" maxlength="30" placeholder="Username">
-      <textarea id="editBio" maxlength="160" placeholder="Bio"></textarea>
-      <select id="editGender">
-        <option value="">Select gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-        <option>Prefer not to say</option>
-      </select>
-      <button id="saveProfileBtn" class="primary">Save profile</button>
-    </div>
-  </div>
-
-  <div id="gameModal" class="modal hidden">
-    <div class="modal-card game-modal">
-      <button class="close-modal" data-close="gameModal">×</button>
-      <h2 id="gameTitle">Game</h2>
-      <div id="gameBody"></div>
-    </div>
-  </div>
-
-  <section id="roomScreen" class="room-screen hidden">
-    <header class="room-header">
-      <button id="leaveRoomBtn" class="circle-btn">‹</button>
-      <div class="room-title-wrap">
-        <b id="roomTitle">Room</b>
-        <small id="roomSub">0 people</small>
-      </div>
-      <button id="shareRoomBtn" class="circle-btn">↗</button>
-      <button id="roomMoreBtn" class="circle-btn">⋯</button>
-    </header>
-    <div class="room-balance"><span>⭐</span> <b>0</b><span class="room-id">ID: <span id="roomIdText"></span></span></div>
-
-    <div id="slotGrid" class="slot-grid"></div>
-
-    <div class="room-notice">
-      <b>♡ Welcome to .vibes ⚡</b>
-      <p>Be respectful. Content involving illegal activity, violence or sexual exploitation is not allowed.</p>
-    </div>
-
-    <div id="roomMessages" class="room-messages"></div>
-
-    <div class="room-controls">
-      <button id="speakerBtn" class="control-circle">🔊</button>
-      <button id="musicBtn" class="control-circle">🎵</button>
-      <button id="micBtn" class="control-circle mic-off">🎙</button>
-    </div>
-    <div class="chat-composer">
-      <input id="roomMessageInput" placeholder="Say Something..." maxlength="2000">
-      <button id="sendRoomMessageBtn">➤</button>
-      <button class="emoji-btn" data-emoji="🎮">🎮</button>
-      <button class="emoji-btn" data-emoji="😂">😂</button>
-    </div>
+  <section id="messages" class="page hidden">
+    <div class="filters"><button class="selected">All</button><button>Online</button><button>Unread</button></div>
+    <div id="people"></div>
   </section>
 
-  <div id="musicPanel" class="music-panel hidden">
-    <b>Room music</b>
-    <input id="musicUrl" placeholder="Direct .mp3/.ogg URL you can use">
-    <div class="music-row">
-      <button id="loadMusicBtn" class="primary">Load</button>
-      <button id="stopMusicBtn" class="secondary">Stop</button>
+  <section id="profile" class="page hidden">
+    <div class="profileHead">
+      <img id="myAvatar" class="avatar big">
+      <div class="grow"><h2 id="myName">User</h2><span id="myGender" class="badge">Gender</span><p>ID: <b id="myId"></b> <button id="copyId">▣</button></p><p id="myBio"></p></div>
+      <button id="edit" class="arrow">›</button>
     </div>
-    <audio id="roomAudio" controls></audio>
-    <small>Use audio you own or have permission to play. Browser autoplay rules still apply.</small>
-  </div>
+    <div class="stats"><div><b>0</b><small>Friends</small></div><div><b>0</b><small>Following</small></div><div><b>0</b><small>Followers</small></div><div><b>0</b><small>Visitors</small></div></div>
+    <div class="gems">⭐ <div><small>Available My Gems</small><b>0.00</b></div><strong>»</strong></div>
+    <div class="profileMenu"><button>🏪<small>My Store</small></button><button>🎒<small>Backpack</small></button><button>🤝<small>Referral</small></button></div>
+    <div class="profileMenu four"><button>🎧<small>Host Center</small></button><button>👑<small>Level</small></button><button>🛟<small>Help</small></button><button id="logout">⚙️<small>Sign out</small></button></div>
+  </section>
 
-  <div id="dmScreen" class="dm-screen hidden">
-    <header class="dm-header">
-      <button id="closeDmBtn" class="circle-btn">‹</button>
-      <img id="dmAvatar" class="avatar sm" src="" alt="">
-      <div><b id="dmName">Message</b><small>Private chat</small></div>
-    </header>
-    <div id="dmMessages" class="dm-messages"></div>
-    <div class="dm-composer">
-      <input id="dmInput" placeholder="Message..." maxlength="2000">
-      <button id="sendDmBtn">➤</button>
-    </div>
-  </div>
+  <nav>
+    <button class="nav active" data-page="home">⌂<small>Home</small></button>
+    <button class="nav" data-page="home" data-tab="rooms">◉<small>Rooms</small></button>
+    <button class="nav" data-page="messages">●●<small>Message</small></button>
+    <button class="nav" data-page="profile">♟<small>Profile</small></button>
+  </nav>
+</main>
 
-  <script type="module" src="app.js"></script>
+<div id="room" class="room hidden">
+  <header class="roomTop">
+    <button id="leave">‹</button><div class="grow"><b id="roomName">Room</b><small id="roomCount">0 people</small></div><button id="share">↗</button><button>⋯</button>
+  </header>
+  <div class="roomInfo"><span>⭐ 0</span><span>ID: <b id="roomId"></b></span></div>
+  <div id="slots" class="slots"></div>
+  <div class="notice"><b>♡ Welcome to .vibes ⚡</b><p>Be respectful. Illegal, violent and sexually exploitative content is not allowed.</p></div>
+  <div id="roomMessages" class="roomMessages"></div>
+  <div class="roomControls"><button id="speaker">🔊</button><button id="music">🎵</button><button id="mic">🎙️</button></div>
+  <div class="composer"><input id="roomText" placeholder="Say Something..."><button id="send">➤</button><button class="emoji">🎮</button><button class="emoji">😂</button></div>
+</div>
+
+<div id="musicPanel" class="music hidden">
+  <b>Room music</b><input id="audioUrl" placeholder="Authorized direct .mp3/.ogg URL"><div><button id="loadMusic" class="pink">Load</button><button id="stopMusic" class="soft">Stop</button></div><audio id="audio" controls></audio><small>Use only audio you are allowed to stream.</small>
+</div>
+
+<div id="editModal" class="modal hidden">
+  <div class="card">
+    <button class="close" data-close="editModal">×</button><h2>Edit profile</h2>
+    <label class="photoPick"><img id="preview" class="avatar large"><span>Choose profile photo</span><input id="photo" type="file" accept="image/*"></label>
+    <input id="editName" placeholder="Username"><textarea id="editBio" placeholder="Bio" maxlength="160"></textarea>
+    <select id="editGender"><option value="">Gender</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select>
+    <button id="saveProfile" class="pink">Save</button>
+  </div>
+</div>
+
+<div id="roomModal" class="modal hidden">
+  <div class="card"><button class="close" data-close="roomModal">×</button><h2>Create room</h2><input id="newRoomName" placeholder="Room name"><input id="newRoomTopic" placeholder="Topic"><button id="saveRoom" class="pink">Create</button></div>
+</div>
+
+<div id="gameModal" class="modal hidden"><div class="card"><button class="close" data-close="gameModal">×</button><h2 id="gameTitle"></h2><div id="gameBody"></div></div></div>
+
+<div id="dm" class="dm hidden">
+  <header><button id="closeDm">‹</button><img id="dmAvatar" class="avatar"><div><b id="dmName"></b><small>Private message</small></div></header>
+  <div id="dmMessages" class="dmMessages"></div>
+  <div class="dmComposer"><input id="dmText" placeholder="Message..."><button id="dmSend">➤</button></div>
+</div>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>

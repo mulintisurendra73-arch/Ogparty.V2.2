@@ -42,9 +42,5 @@ service cloud.firestore {
       allow update, delete: if request.auth != null
         && resource.data.from == request.auth.uid;
     }
-
-    match /dms/{conversationId} {
-      allow read, create, update: if request.auth != null;
-    }
   }
 }
