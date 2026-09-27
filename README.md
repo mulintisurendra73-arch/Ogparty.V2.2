@@ -1,23 +1,27 @@
-# .vibes V8 — GitHub Pages project
+# .vibes V8.2 — real room voice
 
-Complete V8 web/PWA project based on the existing Firebase project `vibes-699f5`.
+GitHub Pages + Firebase Auth/Firestore + WebRTC mesh voice.
 
-## Files
-- `index.html` — complete UI
-- `style.css` — neon mobile UI
-- `app.js` — Firebase Auth, rooms, realtime members/messages, host menu, mic and local music picker
-- `firebase-config.js` — Firebase web config
-- `firestore.rules` — Firestore rules
-- `manifest.json` / `sw.js` — installable PWA support
+## What changed
+- The room microphone now uses WebRTC `RTCPeerConnection` to send the microphone track to other people in the same room.
+- Firebase Firestore is used only for WebRTC signaling (offer/answer/ICE candidates).
+- Each room member gets an audio peer connection; up to 8 seats means a small peer-to-peer mesh.
+- The mic button turns the local track on/off for all connected peers.
+- Room audio is played through hidden HTML audio elements.
 
-## GitHub Pages
-Upload all files to the same repository/folder that serves `index.html`. Enable GitHub Pages from the repository settings.
+## Firebase rules
+Publish `firestore.rules` in Firebase Console > Firestore Database > Rules. The rules include the `rooms/{roomId}/signals` signaling path.
 
-## Music
-Tap 🎵 and select audio files from the phone. Browser security does not allow a GitHub Pages website to silently scan every downloaded song on the device. The user must select files using the phone file picker. Selected songs are played locally and are not uploaded to Firebase.
+## Important network note
+This version uses public Google STUN servers. WebRTC can connect directly on many networks, but some carrier/mobile/strict NAT networks require a TURN server for reliable voice. For production voice across all networks, add a TURN service (for example coturn/Cloudflare Calls/LiveKit/Agora) and put its ICE server credentials in `RTC_CONFIG` in `app.js`.
 
-## Host controls
-Tap a room member to open Seat Here, Mute, Unmute, Like, Kick Out, Block and View Profile. Kick/Block are restricted by the room owner check in the app and Firestore rules.
+## How to test
+1. Deploy the files to GitHub Pages over HTTPS.
+2. Publish the included Firestore rules.
+3. Open the same room on two different phones/accounts.
+4. Join the same room on both devices.
+5. Allow microphone permission on the speaking device.
+6. Press the microphone button. The other phone should receive the voice when the WebRTC connection succeeds.
+7. Use headphones during testing to avoid feedback/echo.
 
-## Important
-This is a web/PWA V8. It is not a native APK. Real room-wide voice/audio broadcasting still requires WebRTC signaling/media infrastructure; Firebase Firestore alone is not a media server.
+The WebRTC media is peer-to-peer; Firebase does not carry the microphone audio itself.
